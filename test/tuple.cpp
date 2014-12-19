@@ -129,9 +129,23 @@ int main() {
     assert(shiro::get<0>(rt) == 2);
     assert(shiro::get<1>(rt) == 'b');
   }
+  {
+    std::pair<int, char> tmp(2, 'b');
+    shiro::tuple<int, char> rt;
+    rt = std::move(tmp);
+    assert(shiro::get<0>(rt) == 2);
+    assert(shiro::get<1>(rt) == 'b');
+  }
   // copy assignment
   {
     shiro::tuple<int, char> tmp(2, 'b');
+    shiro::tuple<int, char> rt;
+    rt = tmp;
+    assert(shiro::get<0>(rt) == 2);
+    assert(shiro::get<1>(rt) == 'b');
+  }
+  {
+    std::pair<int, char> tmp(2, 'b');
     shiro::tuple<int, char> rt;
     rt = tmp;
     assert(shiro::get<0>(rt) == 2);
@@ -167,6 +181,9 @@ int main() {
 
     assert(shiro::get<0>(shiro::tuple<int, char>(2, 'b')) == 2);
     assert(shiro::get<1>(shiro::tuple<int, char>(2, 'b')) == 'b');
+
+    int i = 5;
+    assert(shiro::get<0>(shiro::tuple<int&>(i)) == 5);
   }
 
   /* swap */

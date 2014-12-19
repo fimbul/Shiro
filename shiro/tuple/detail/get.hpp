@@ -1,6 +1,8 @@
 #ifndef SHIRO_TUPLE_DETAIL_GETHPP
 #define SHIRO_TUPLE_DETAIL_GETHPP
 
+#include <utility>
+
 #include <shiro/tuple/tuple_element.hpp>
 #include <shiro/tuple/tuple_fwd.hpp>
 
@@ -18,7 +20,7 @@ constexpr const T& get(const tuple_leaf<I, T>& l) noexcept {
 }
 template <std::size_t I, typename T>
 constexpr T&& get(tuple_leaf<I, T>&& l) noexcept {
-  return std::move(l.value);
+  return std::forward<T>(l.value);
 }
 template <typename T, std::size_t I>
 constexpr T& get(tuple_leaf<I, T>& l) noexcept {
@@ -30,7 +32,7 @@ constexpr const T& get(const tuple_leaf<I, T>& l) noexcept {
 }
 template <typename T, std::size_t I>
 constexpr T&& get(tuple_leaf<I, T>&& l) noexcept {
-  return std::move(l.value);
+  return std::forward<T>(l.value);
 }
 
 }  // namespace tuple

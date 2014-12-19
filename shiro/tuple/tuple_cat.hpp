@@ -161,7 +161,7 @@ constexpr RTypes tuple_cat(Tuples&& ts, const std::index_sequence<Indices1...>&,
 }
 
 }  // namespace tuple
-}  // namespace detal
+}  // namespace detail
 
 template <typename... Tuples>
 constexpr typename shiro::detail::tuple::tuple_cat_return<Tuples...>::type
