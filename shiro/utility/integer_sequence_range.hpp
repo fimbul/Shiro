@@ -1,32 +1,99 @@
 #ifndef SHIRO_UTILITY_INTEGER_SEQUENCE_RANGE
 #define SHIRO_UTILITY_INTEGER_SEQUENCE_RANGE
 
+#include <type_traits>
 #include <utility>
 
 namespace shiro {
+namespace detail {
 
-template <typename T, T N, T M, T O = 1>
-struct integer_sequence_range {
- private:
-  template <T Shift, T... Indices>
-  static std::integer_sequence<T, ((Indices * O) + Shift)...> eval(
-      std::integer_sequence<T, Indices...>);
+template <typename T, typename IndexSeq, T Next>
+struct integer_sequence_range_next;
+template <typename T, T... Indices, T Next>
+struct integer_sequence_range_next<T, std::integer_sequence<T, Indices...>,
+                                   Next> {
 
- public:
-  using type = decltype(eval<N>(
-      std::make_integer_sequence<T, (M - N) / O + ((M - N) % O > 0)>()));
+  using type = std::integer_sequence<T, Indices..., (Indices + Next)...>;
 };
 
-template <std::size_t N, std::size_t M, std::size_t O = 1>
-using index_sequence_range = integer_sequence_range<std::size_t, N, M, O>;
+template <typename T, typename IndexSeq, T Next, T Tail>
+struct integer_sequence_range_next2;
+template <typename T, T... Indices, T Next, T Tail>
+struct integer_sequence_range_next2<T, std::integer_sequence<T, Indices...>,
+                                    Next, Tail> {
 
-template <typename T, T N, T M, T O = 1>
+  using type = std::integer_sequence<T, Indices..., (Indices + Next)..., Tail>;
+};
+
+template <typename T, T First, T Step, T N, typename Enable = void>
+struct integer_sequence_range_impl;
+template <typename T, T First, T Step, T N>
+struct integer_sequence_range_impl<T, First, Step, N,
+                                   typename std::enable_if<(N == 0)>::type> {
+
+  using type = std::integer_sequence<T>;
+};
+template <typename T, T First, T Step, T N>
+struct integer_sequence_range_impl<T, First, Step, N,
+                                   typename std::enable_if<(N == 1)>::type> {
+
+  using type = std::integer_sequence<T, First>;
+};
+template <typename T, T First, T Step, T N>
+struct integer_sequence_range_impl<
+    T, First, Step, N,
+    typename std::enable_if<(N > 1 && N % 2 == 0)>::
+        type> : detail::
+                    integer_sequence_range_next<
+                        T, typename detail::integer_sequence_range_impl<
+                               T, First, Step, N / 2>::type,
+                        First + N / 2 * Step> {};
+template <typename T, T First, T Step, T N>
+struct integer_sequence_range_impl<
+    T, First, Step, N,
+    typename std::enable_if<(N > 1 && N % 2 == 1)>::
+        type> : detail::
+                    integer_sequence_range_next2<
+                        T, typename detail::integer_sequence_range_impl<
+                               T, First, Step, N / 2>::type,
+                        First + N / 2 * Step, First + (N - 1) * Step> {};
+
+template <typename T, T First, typename IndexSeq>
+struct integer_sequence_range_helper;
+template <typename T, T First, T... Indices>
+struct integer_sequence_range_helper<T, First,
+                                     std::integer_sequence<T, Indices...>> {
+
+  using type = std::integer_sequence<T, (Indices + First)...>;
+};
+
+}  // namespace detail
+
+template <typename T, T First, T Last, T Step = 1>
+struct integer_sequence_range
+    : detail::integer_sequence_range_helper<
+          T, First,
+          typename detail::integer_sequence_range_impl<
+              T, 0, Step, ((Last - First) + (Step - 1)) / Step>::type> {};
+
+template <std::size_t N, std::size_t M, std::size_t Step = 1>
+using index_sequence_range = integer_sequence_range<std::size_t, N, M, Step>;
+
+template <typename T, T N, T Step = 1>
+using make_integer_sequence =
+    typename integer_sequence_range<T, 0, N, Step>::type;
+
+template <std::size_t N, std::size_t Step = 1>
+using make_index_sequence =
+    typename integer_sequence_range<std::size_t, 0, N, Step>::type;
+
+template <typename T, T N, T M, T Step = 1>
 using make_integer_sequence_range =
-    typename integer_sequence_range<T, N, M, O>::type;
+    typename integer_sequence_range<T, N, M, Step>::type;
 
-template <std::size_t N, std::size_t M, std::size_t O = 1>
+template <std::size_t N, std::size_t M, std::size_t Step = 1>
 using make_index_sequence_range =
-    typename integer_sequence_range<std::size_t, N, M, O>::type;
+    typename integer_sequence_range<std::size_t, N, M, Step>::type;
 
 }  // namespace shiro
 

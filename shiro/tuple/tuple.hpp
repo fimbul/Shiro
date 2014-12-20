@@ -155,7 +155,7 @@ class tuple_base<std::index_sequence<Indices...>,
 
 template <typename... Types>
 class tuple {
-  using tuple_indices_t = std::make_index_sequence<sizeof...(Types)>;
+  using tuple_indices_t = shiro::make_index_sequence<sizeof...(Types)>;
   using tuple_types_t = shiro::detail::tuple::tuple_types<Types...>;
   using tuple_base_t =
       shiro::detail::tuple::tuple_base<tuple_indices_t, tuple_types_t>;
@@ -219,13 +219,13 @@ class tuple {
       shiro::make_index_sequence_range<sizeof...(UTypes), sizeof...(Types)>{},
       typename shiro::detail::tuple::make_partial_tuple_types<
           sizeof...(UTypes), sizeof...(Types), tuple_types_t>::type{},
-      std::make_index_sequence<sizeof...(UTypes)>{},
+      shiro::make_index_sequence<sizeof...(UTypes)>{},
       std::forward<UTypes>(uargs)...)))
       : base(shiro::make_index_sequence_range<sizeof...(UTypes),
                                               sizeof...(Types)>{},
              typename shiro::detail::tuple::make_partial_tuple_types<
                  sizeof...(UTypes), sizeof...(Types), tuple_types_t>::type{},
-             std::make_index_sequence<sizeof...(UTypes)>{},
+             shiro::make_index_sequence<sizeof...(UTypes)>{},
              std::forward<UTypes>(uargs)...) {}
 
   template <typename... UTypes,

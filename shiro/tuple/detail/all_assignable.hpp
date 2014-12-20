@@ -25,7 +25,7 @@ struct all_assignable {
 
  public:
   static constexpr bool value = decltype(eval(
-      std::make_index_sequence<shiro::tuple_size<TupleTypes>::value>{}))::value;
+      shiro::make_index_sequence<shiro::tuple_size<TupleTypes>::value>{}))::value;
 };
 
 }  // namespace tuple

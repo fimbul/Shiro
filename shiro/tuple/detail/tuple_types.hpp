@@ -8,6 +8,7 @@
 #include <shiro/tuple/tuple_fwd.hpp>
 #include <shiro/tuple/tuple_element.hpp>
 #include <shiro/type_traits.hpp>
+#include <shiro/utility.hpp>
 
 namespace shiro {
 namespace detail {
@@ -29,7 +30,7 @@ struct tuple_types_base<
 template <typename... Types>
 class tuple_types {
   using tuple_types_base_t =
-      tuple_types_base<std::make_index_sequence<sizeof...(Types)>, Types...>;
+      tuple_types_base<shiro::make_index_sequence<sizeof...(Types)>, Types...>;
 
  public:
   template <std::size_t N>

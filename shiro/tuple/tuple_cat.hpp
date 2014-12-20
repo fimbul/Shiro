@@ -70,7 +70,7 @@ template <typename... Tuples>
 struct tuple_cat_return {
   using type = typename tuple_cat_return_impl<typename tuple_cat_return_impl2<
       std::remove_reference_t<Tuples>,
-      std::make_index_sequence<shiro::tuple_size<
+      shiro::make_index_sequence<shiro::tuple_size<
           std::remove_reference_t<Tuples>>::value>>::type...>::type;
 };
 
@@ -122,7 +122,7 @@ struct tuple_cat_indices_impl {
 
 template <typename... Tuples>
 struct tuple_cat_indices {
-  using type = typename tuple_cat_indices_impl<std::make_index_sequence<
+  using type = typename tuple_cat_indices_impl<shiro::make_index_sequence<
       shiro::tuple_size<std::remove_reference_t<Tuples>>::value>...>::type;
 };
 
@@ -145,8 +145,8 @@ struct tuple_cat_indices2_impl<std::index_sequence<Indices...>,
 template <typename... Tuples>
 struct tuple_cat_indices2 {
   using type = typename tuple_cat_indices2_impl<
-      std::make_index_sequence<sizeof...(Tuples)>,
-      std::make_index_sequence<
+      shiro::make_index_sequence<sizeof...(Tuples)>,
+      shiro::make_index_sequence<
           shiro::tuple_size<std::remove_reference_t<Tuples>>::value>...>::type;
 };
 
