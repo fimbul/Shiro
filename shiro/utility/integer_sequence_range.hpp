@@ -6,6 +6,7 @@
 
 namespace shiro {
 namespace detail {
+namespace utility {
 
 template <typename T, typename IndexSeq, T Next>
 struct integer_sequence_range_next;
@@ -43,20 +44,19 @@ template <typename T, T First, T Step, T N>
 struct integer_sequence_range_impl<
     T, First, Step, N,
     typename std::enable_if<(N > 1 && N % 2 == 0)>::
-        type> : detail::
-                    integer_sequence_range_next<
-                        T, typename detail::integer_sequence_range_impl<
-                               T, First, Step, N / 2>::type,
-                        First + N / 2 * Step> {};
+        type> : integer_sequence_range_next<T,
+                                            typename integer_sequence_range_impl<
+                                                T, First, Step, N / 2>::type,
+                                            First + N / 2 * Step> {};
 template <typename T, T First, T Step, T N>
 struct integer_sequence_range_impl<
     T, First, Step, N,
     typename std::enable_if<(N > 1 && N % 2 == 1)>::
-        type> : detail::
-                    integer_sequence_range_next2<
-                        T, typename detail::integer_sequence_range_impl<
-                               T, First, Step, N / 2>::type,
-                        First + N / 2 * Step, First + (N - 1) * Step> {};
+        type> : integer_sequence_range_next2<T,
+                                             typename integer_sequence_range_impl<
+                                                 T, First, Step, N / 2>::type,
+                                             First + N / 2 * Step,
+                                             First + (N - 1) * Step> {};
 
 template <typename T, T First, typename IndexSeq>
 struct integer_sequence_range_helper;
@@ -67,13 +67,14 @@ struct integer_sequence_range_helper<T, First,
   using type = std::integer_sequence<T, (Indices + First)...>;
 };
 
+}  // namespace utility
 }  // namespace detail
 
 template <typename T, T First, T Last, T Step = 1>
 struct integer_sequence_range
-    : detail::integer_sequence_range_helper<
+    : detail::utility::integer_sequence_range_helper<
           T, First,
-          typename detail::integer_sequence_range_impl<
+          typename detail::utility::integer_sequence_range_impl<
               T, 0, Step, ((Last - First) + (Step - 1)) / Step>::type> {};
 
 template <std::size_t N, std::size_t M, std::size_t Step = 1>
