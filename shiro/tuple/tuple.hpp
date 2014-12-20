@@ -85,13 +85,15 @@ class tuple_base<std::index_sequence<Indices...>,
       : tuple_leaf<Indices, shiro::tuple_element_t<Indices, TupleTypes>>(
             std::forward<UTypes>(shiro::get<Indices>(t)))... {}
 
-  template <typename... UTypes>
-  tuple_base& operator=(tuple_base<UTypes...>&& t) noexcept(
-      shiro::logical_and_c<noexcept(
-          shiro::detail::tuple::get<Indices>(std::declval<tuple_base&>()) =
-              std::move(shiro::detail::tuple::get<Indices>(t)))...>::value) {
-    swallow(shiro::detail::tuple::get<Indices>(*this) =
-                std::move(shiro::detail::tuple::get<Indices>(t))...);
+  template <typename UIndices, typename UTypes>
+  tuple_base&
+  operator=(tuple_base<UIndices, UTypes>&& t) noexcept(shiro::logical_and_c<
+      noexcept(shiro::detail::tuple::get<Indices>(std::declval<tuple_base&>()) =
+                   std::forward<shiro::tuple_element_t<Indices, UTypes>>(
+                       shiro::detail::tuple::get<Indices>(t)))...>::value) {
+    swallow((shiro::detail::tuple::get<Indices>(*this) =
+                 std::forward<shiro::tuple_element_t<Indices, UTypes>>(
+                     shiro::detail::tuple::get<Indices>(t)))...);
     return *this;
   }
 
@@ -116,23 +118,23 @@ class tuple_base<std::index_sequence<Indices...>,
   tuple_base& operator=(const std::pair<U1, U2>& p) noexcept(
       std::is_nothrow_copy_constructible<std::pair<U1, U2>>::value and noexcept(
           shiro::detail::tuple::get<0>(std::declval<tuple_base&>()) =
-              std::move(std::pair<U1, U2>(p).first))
+              std::forward<U1>(std::pair<U1, U2>(p).first))
       and noexcept(shiro::detail::tuple::get<1>(std::declval<tuple_base&>()) =
-                       std::move(std::pair<U1, U2>(p).second))) {
+                       std::forward<U2>(std::pair<U1, U2>(p).second))) {
     std::pair<U1, U2> tmp(p);
-    shiro::detail::tuple::get<0>(*this) = std::move(tmp.first);
-    shiro::detail::tuple::get<1>(*this) = std::move(tmp.second);
+    shiro::detail::tuple::get<0>(*this) = std::forward<U1>(tmp.first);
+    shiro::detail::tuple::get<1>(*this) = std::forward<U2>(tmp.second);
     return *this;
   }
 
   template <typename U1, typename U2>
   tuple_base& operator=(std::pair<U1, U2>&& p) noexcept(
       noexcept(shiro::detail::tuple::get<0>(std::declval<tuple_base&>()) =
-                   std::move(p.first))
+                   std::forward<U1>(p.first))
       and noexcept(shiro::detail::tuple::get<1>(std::declval<tuple_base&>()) =
-                       std::move(p.second))) {
-    shiro::detail::tuple::get<0>(*this) = std::move(p.first);
-    shiro::detail::tuple::get<1>(*this) = std::move(p.second);
+                       std::forward<U2>(p.second))) {
+    shiro::detail::tuple::get<0>(*this) = std::forward<U1>(p.first);
+    shiro::detail::tuple::get<1>(*this) = std::forward<U2>(p.second);
     return *this;
   }
 
