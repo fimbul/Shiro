@@ -150,14 +150,35 @@ struct tuple_cat_indices2 {
           shiro::tuple_size<std::remove_reference_t<Tuples>>::value>...>::type;
 };
 
+template <bool>
+struct tuple_cat_forward {
+  template <std::size_t I1, std::size_t I2, typename T, typename Tuples>
+  static constexpr const T& eval(Tuples&& t) {
+    return shiro::get<I1>(shiro::get<I2>(t));
+  }
+};
+template <>
+struct tuple_cat_forward<false> {
+  template <std::size_t I1, std::size_t I2, typename T, typename Tuples>
+  static constexpr T&& eval(Tuples&& t) {
+    return std::forward<T>(shiro::get<I1>(shiro::get<I2>(t)));
+  }
+};
+
 template <typename RTypes, typename Tuples, std::size_t... Indices1,
           std::size_t... Indices2>
 constexpr RTypes tuple_cat(Tuples&& ts, const std::index_sequence<Indices1...>&,
                            const std::index_sequence<Indices2...>&) {
-  return RTypes(std::forward<shiro::tuple_element_t<
-      Indices1, std::remove_reference_t<shiro::tuple_element_t<
-                    Indices2, std::remove_reference_t<Tuples>>>>>(
-      shiro::get<Indices1>(shiro::get<Indices2>(ts)))...);
+  return RTypes(
+      shiro::detail::tuple::tuple_cat_forward<
+          std::is_const<std::remove_reference_t<
+              shiro::tuple_element_t<Indices2, Tuples>>>::value>::
+          template eval<
+              Indices1, Indices2,
+              shiro::tuple_element_t<
+                  Indices1, std::remove_reference_t<shiro::tuple_element_t<
+                                Indices2, std::remove_reference_t<Tuples>>>>>(
+              ts)...);
 }
 
 }  // namespace tuple
