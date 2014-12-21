@@ -14,6 +14,7 @@
 
 #include <utility>
 
+#include <shiro/tuple/apply.hpp>
 #include <shiro/tuple/comparison.hpp>
 #include <shiro/tuple/forward_as_tuple.hpp>
 #include <shiro/tuple/ignore.hpp>

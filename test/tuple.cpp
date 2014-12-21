@@ -16,6 +16,10 @@
 
 #include <shiro/tuple.hpp>
 
+constexpr bool apply_test_func(const char*, const char*, int, bool) {
+  return true;
+}
+
 int main() {
   /* meta functions */
   {
@@ -266,8 +270,10 @@ int main() {
     static_assert(ct1 == ct2, "");
   }
   {
-    constexpr shiro::tuple<int, int, int, int, int, int, int> ct1(1, 2, 3, 4, 5, 6, 7);
-    constexpr shiro::tuple<int, int, int, int, int, int, int> ct2(1, 2, 3, 4, 5, 7, 7);
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct1(1, 2, 3, 4, 5,
+                                                                  6, 7);
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct2(1, 2, 3, 4, 5,
+                                                                  7, 7);
     static_assert(ct1 != ct2, "");
   }
   {
@@ -384,5 +390,11 @@ int main() {
     static_assert(shiro::get<5>(ct) == 'b', "");
     static_assert(shiro::get<6>(ct) == 3.14, "");
     static_assert(shiro::get<7>(ct) == true, "");
+  }
+
+  /* apply */
+  {
+    constexpr auto tmp = shiro::make_tuple("Hello", "world", 123, true);
+    static_assert(shiro::apply(apply_test_func, tmp), "");
   }
 }
