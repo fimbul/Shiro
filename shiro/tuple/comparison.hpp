@@ -36,8 +36,8 @@ constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&);
 template <typename Tuple, typename UTuple, std::size_t... LIndices,
           std::size_t... RIndices>
 constexpr bool tuple_eq(bool ie, const Tuple& t, const UTuple& u,
-                        std::index_sequence<LIndices...>,
-                        std::index_sequence<RIndices...>) {
+                        const std::index_sequence<LIndices...>&,
+                        const std::index_sequence<RIndices...>&) {
   return tuple_eq(
       tuple_eq(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
                shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
@@ -80,10 +80,10 @@ constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
 
 template <typename Tuple, typename UTuple, std::size_t... LIndices,
           std::size_t... RIndices>
-constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
-                                         const Tuple& t, const UTuple& u,
-                                         std::index_sequence<LIndices...>,
-                                         std::index_sequence<RIndices...>) {
+constexpr std::pair<bool, bool> tuple_lt(
+    const std::pair<bool, bool>& ie, const Tuple& t, const UTuple& u,
+    const std::index_sequence<LIndices...>&,
+    const std::index_sequence<RIndices...>&) {
   return tuple_lt(
       tuple_lt(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
                shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
