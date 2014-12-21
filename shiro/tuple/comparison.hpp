@@ -45,12 +45,25 @@ constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
             : ie;
 }
 
+template <bool B, typename... Types, typename... UTypes,
+          std::enable_if_t<!B>*& = shiro::enabler>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u) {
+  return tuple_eq<0, sizeof...(Types)>(ie, t, u);
+}
+
+template <bool B, typename... Types, typename... UTypes,
+          std::enable_if_t<B>*& = shiro::enabler>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u) {
+  return tuple_eq<sizeof...(Types) - 1, 1>(
+      tuple_eq<0, sizeof...(Types)>(ie, t, u), t, u);
+}
+
 template <typename... Types, typename... UTypes>
 constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
-  return tuple_eq<
-      0, (sizeof...(Types) < sizeof...(UTypes) ? sizeof...(Types)
-                                               : sizeof...(UTypes))>(ie, t, u);
+  return tuple_eq<(bool)(sizeof...(Types) % 2)>(ie, t, u);
 }
 
 constexpr bool tuple_lt(bool ie, const shiro::tuple<>& t,
@@ -84,13 +97,26 @@ constexpr bool tuple_lt(const std::pair<bool, bool>& ie) {
   return ie.first && ie.second;
 }
 
-template <typename... Types, typename... UTypes>
+template <bool B, typename... Types, typename... UTypes,
+          std::enable_if_t<!B>*& = shiro::enabler>
 constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
   return tuple_lt(
-      tuple_lt<0, (sizeof...(Types) < sizeof...(UTypes) ? sizeof...(Types)
-                                                        : sizeof...(UTypes))>(
-          std::make_pair(false, ie), t, u));
+      tuple_lt<0, sizeof...(Types)>(std::make_pair(false, ie), t, u));
+}
+
+template <bool B, typename... Types, typename... UTypes,
+          std::enable_if_t<B>*& = shiro::enabler>
+constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u) {
+  return tuple_lt(tuple_lt<sizeof...(Types) - 1, 1>(
+      tuple_lt<0, sizeof...(Types)>(std::make_pair(false, ie), t, u), t, u));
+}
+
+template <typename... Types, typename... UTypes>
+constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u) {
+  return tuple_lt<(bool)(sizeof...(Types) % 2)>(ie, t, u);
 }
 
 }  // namespace tuple
@@ -98,6 +124,8 @@ constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
 
 template <typename... Types, typename... UTypes>
 constexpr bool operator==(const tuple<Types...>& t, const tuple<UTypes...>& u) {
+  static_assert(sizeof...(Types) == sizeof...(UTypes),
+                "tuple objects can only be compared if they have equal sizes.");
   return shiro::detail::tuple::tuple_eq(sizeof...(Types) == sizeof...(UTypes),
                                         t, u);
 }
@@ -109,6 +137,8 @@ constexpr bool operator!=(const tuple<Types...>& t, const tuple<UTypes...>& u) {
 
 template <typename... Types, typename... UTypes>
 constexpr bool operator<(const tuple<Types...>& t, const tuple<UTypes...>& u) {
+  static_assert(sizeof...(Types) == sizeof...(UTypes),
+                "tuple objects can only be compared if they have equal sizes.");
   return shiro::detail::tuple::tuple_lt(sizeof...(Types) == sizeof...(UTypes),
                                         t, u);
 }

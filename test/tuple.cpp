@@ -261,6 +261,11 @@ int main() {
     static_assert(ct1 == ct2, "");
   }
   {
+    constexpr shiro::tuple<int, int, int, int, int> ct1(1, 2, 3, 4, 5);
+    constexpr shiro::tuple<int, int, int, int, int> ct2(1, 2, 3, 4, 5);
+    static_assert(ct1 == ct2, "");
+  }
+  {
     constexpr shiro::tuple<> ct1;
     constexpr shiro::tuple<> ct2;
     static_assert(ct1 == ct2, "");
@@ -276,13 +281,13 @@ int main() {
     static_assert(ct1 != ct2, "");
   }
   {
-    constexpr shiro::tuple<int, char> ct1(1, 'a');
+    constexpr shiro::tuple<int, char, int> ct1(1, 'a', 0);
     constexpr shiro::tuple<int, char, int> ct2(1, 'b', 0);
     static_assert(ct1 != ct2, "");
   }
   {
-    constexpr shiro::tuple<int, char, int> ct1(1, 'a');
-    constexpr shiro::tuple<int, char> ct2(1, 'b');
+    constexpr shiro::tuple<int, char, int> ct1(1, 'a', 1);
+    constexpr shiro::tuple<int, char, int> ct2(1, 'a', 2);
     static_assert(ct1 != ct2, "");
   }
   {
@@ -348,6 +353,16 @@ int main() {
   {
     constexpr shiro::tuple<int, char> ct1(3, 'b');
     constexpr shiro::tuple<int, char> ct2(2, 'b');
+    static_assert(ct1 >= ct2, "");
+  }
+  {
+    constexpr shiro::tuple<int, char, char> ct1(3, 'b', 'd');
+    constexpr shiro::tuple<int, char, char> ct2(3, 'b', 'a');
+    static_assert(ct1 >= ct2, "");
+  }
+  {
+    constexpr shiro::tuple<int, int, int, int, int> ct1(1, 2, 3, 4, 5);
+    constexpr shiro::tuple<int, int, int, int, int> ct2(1, 2, 3, 4, 4);
     static_assert(ct1 >= ct2, "");
   }
 
