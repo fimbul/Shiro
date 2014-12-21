@@ -25,98 +25,110 @@ namespace shiro {
 namespace detail {
 namespace tuple {
 
-constexpr bool tuple_eq(bool ie, const shiro::tuple<>& t,
-                        const shiro::tuple<>& u) {
+template <typename... Types, typename... UTypes>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u);
+template <typename T, typename U>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<T>& t,
+                        const shiro::tuple<U>& u);
+constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&);
+
+template <typename Tuple, typename UTuple, std::size_t... LIndices,
+          std::size_t... RIndices>
+constexpr bool tuple_eq(bool ie, const Tuple& t, const UTuple& u,
+                        std::index_sequence<LIndices...>,
+                        std::index_sequence<RIndices...>) {
+  return tuple_eq(
+      tuple_eq(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
+               shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
+      shiro::forward_as_tuple(shiro::get<RIndices>(t)...),
+      shiro::forward_as_tuple(shiro::get<RIndices>(u)...));
+}
+
+template <typename T, typename U>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<T>& t,
+                        const shiro::tuple<U>& u) {
+  return ie && (shiro::get<0>(t) == shiro::get<0>(u));
+}
+
+constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&) {
   return ie;
-}
-
-template <std::size_t I, std::size_t L, typename... Types, typename... UTypes,
-          std::enable_if_t<(L == 1)>*& = shiro::enabler>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return ie && (shiro::get<I>(t) == shiro::get<I>(u));
-}
-
-template <std::size_t I, std::size_t L, typename... Types, typename... UTypes,
-          std::enable_if_t<(L > 1)>*& = shiro::enabler>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return ie ? tuple_eq<I * 2 + 1, L / 2>(tuple_eq<I * 2, L / 2>(ie, t, u), t, u)
-            : ie;
-}
-
-template <bool B, typename... Types, typename... UTypes,
-          std::enable_if_t<!B>*& = shiro::enabler>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return tuple_eq<0, sizeof...(Types)>(ie, t, u);
-}
-
-template <bool B, typename... Types, typename... UTypes,
-          std::enable_if_t<B>*& = shiro::enabler>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return tuple_eq<sizeof...(Types) - 1, 1>(
-      tuple_eq<0, sizeof...(Types)>(ie, t, u), t, u);
 }
 
 template <typename... Types, typename... UTypes>
 constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
-  return tuple_eq<(bool)(sizeof...(Types) % 2)>(ie, t, u);
+  return ie ? tuple_eq(
+                  ie, t, u,
+                  shiro::make_index_sequence_range<0, sizeof...(Types) / 2>{},
+                  shiro::make_index_sequence_range<sizeof...(Types) / 2,
+                                                   sizeof...(Types)>{})
+            : ie;
 }
 
-constexpr bool tuple_lt(bool ie, const shiro::tuple<>& t,
-                        const shiro::tuple<>& u) {
-  return false;
-}
-
-template <std::size_t I, std::size_t L, typename... Types, typename... UTypes,
-          std::enable_if_t<(L == 1)>*& = shiro::enabler>
+template <typename... Types, typename... UTypes>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<Types...>& t,
-                                         const shiro::tuple<UTypes...>& u) {
-  return ie.first ? ie : ie.second ? (shiro::get<I>(t) < shiro::get<I>(u))
+                                         const shiro::tuple<UTypes...>& u);
+template <typename T, typename U>
+constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
+                                         const shiro::tuple<T>& t,
+                                         const shiro::tuple<U>& u);
+constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
+                                         const shiro::tuple<>&,
+                                         const shiro::tuple<>&);
+
+template <typename Tuple, typename UTuple, std::size_t... LIndices,
+          std::size_t... RIndices>
+constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
+                                         const Tuple& t, const UTuple& u,
+                                         std::index_sequence<LIndices...>,
+                                         std::index_sequence<RIndices...>) {
+  return tuple_lt(
+      tuple_lt(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
+               shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
+      shiro::forward_as_tuple(shiro::get<RIndices>(t)...),
+      shiro::forward_as_tuple(shiro::get<RIndices>(u)...));
+}
+
+template <typename T, typename U>
+constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
+                                         const shiro::tuple<T>& t,
+                                         const shiro::tuple<U>& u) {
+  return ie.first ? ie : ie.second ? (shiro::get<0>(t) < shiro::get<0>(u))
       ? std::make_pair(true, true)
-      : !(shiro::get<I>(u) < shiro::get<I>(t)) ? ie
+      : !(shiro::get<0>(u) < shiro::get<0>(t)) ? ie
                                                : std::make_pair(false, false)
       : ie;
 }
 
-template <std::size_t I, std::size_t L, typename... Types, typename... UTypes,
-          std::enable_if_t<(L > 1)>*& = shiro::enabler>
+constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
+                                         const shiro::tuple<>&,
+                                         const shiro::tuple<>&) {
+  return ie;
+}
+
+template <typename... Types, typename... UTypes>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<Types...>& t,
                                          const shiro::tuple<UTypes...>& u) {
-  return ie.first == ie.second ? ie
-                               : tuple_lt<I * 2 + 1, L / 2>(
-                                     tuple_lt<I * 2, L / 2>(ie, t, u), t, u);
+  return ie.first == ie.second
+             ? ie
+             : tuple_lt(
+                   ie, t, u,
+                   shiro::make_index_sequence_range<0, sizeof...(Types) / 2>{},
+                   shiro::make_index_sequence_range<sizeof...(Types) / 2,
+                                                    sizeof...(Types)>{});
 }
 
 constexpr bool tuple_lt(const std::pair<bool, bool>& ie) {
   return ie.first && ie.second;
 }
 
-template <bool B, typename... Types, typename... UTypes,
-          std::enable_if_t<!B>*& = shiro::enabler>
-constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return tuple_lt(
-      tuple_lt<0, sizeof...(Types)>(std::make_pair(false, ie), t, u));
-}
-
-template <bool B, typename... Types, typename... UTypes,
-          std::enable_if_t<B>*& = shiro::enabler>
-constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u) {
-  return tuple_lt(tuple_lt<sizeof...(Types) - 1, 1>(
-      tuple_lt<0, sizeof...(Types)>(std::make_pair(false, ie), t, u), t, u));
-}
-
 template <typename... Types, typename... UTypes>
 constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
-  return tuple_lt<(bool)(sizeof...(Types) % 2)>(ie, t, u);
+  return tuple_lt(tuple_lt(std::make_pair(false, ie), t, u));
 }
 
 }  // namespace tuple

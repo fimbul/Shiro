@@ -266,6 +266,11 @@ int main() {
     static_assert(ct1 == ct2, "");
   }
   {
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct1(1, 2, 3, 4, 5, 6, 7);
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct2(1, 2, 3, 4, 5, 7, 7);
+    static_assert(ct1 != ct2, "");
+  }
+  {
     constexpr shiro::tuple<> ct1;
     constexpr shiro::tuple<> ct2;
     static_assert(ct1 == ct2, "");
