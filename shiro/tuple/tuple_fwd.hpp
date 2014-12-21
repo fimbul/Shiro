@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef SHIRO_TUPLE_TUPLE_FWD_HPP
 #define SHIRO_TUPLE_TUPLE_FWD_HPP
 
@@ -23,7 +34,6 @@ class tuple_leaf;
  
 }  // namespace tuple
 }  // namespace detail
-
 }  // namespace shiro
 
-#endif  // SHIRO_TUPLE_TUPLE_FWD_HPP
+#endif  // #ifndef SHIRO_TUPLE_TUPLE_FWD_HPP

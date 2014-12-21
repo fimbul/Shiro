@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef SHIRO_TUPLE_TUPLE_SIZE_HPP
 #define SHIRO_TUPLE_TUPLE_SIZE_HPP
 
@@ -22,4 +33,4 @@ class tuple_size<tuple<Types...>> : public std::integral_constant<
                                         std::size_t, sizeof...(Types)> {};
 }  // namespace shiro
 
-#endif  // SHIRO_TUPLE_TUPLE_SIZE_HPP
+#endif  // #ifndef SHIRO_TUPLE_TUPLE_SIZE_HPP

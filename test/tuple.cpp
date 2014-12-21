@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #include <cassert>
 #include <functional>
 #include <string>
@@ -247,6 +258,11 @@ int main() {
   {
     constexpr shiro::tuple<int, char> ct1(1, 'a');
     constexpr shiro::tuple<int, char> ct2(1, 'a');
+    static_assert(ct1 == ct2, "");
+  }
+  {
+    constexpr shiro::tuple<> ct1;
+    constexpr shiro::tuple<> ct2;
     static_assert(ct1 == ct2, "");
   }
   {

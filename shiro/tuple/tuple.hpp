@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef SHIRO_TUPLE_TUPLE_HPP
 #define SHIRO_TUPLE_TUPLE_HPP
 
@@ -25,6 +36,8 @@ namespace tuple {
 template <std::size_t Index, typename Type>
 class tuple_leaf {
  public:
+  using type = Type;
+  static constexpr std::size_t index = Index;
   Type value;
 
   constexpr tuple_leaf() noexcept(noexcept(Type())) : value() {}
@@ -307,4 +320,4 @@ class tuple {
 
 }  // namespace shiro
 
-#endif  // SHIRO_TUPLE_TUPLE_HPP
+#endif  // #ifndef SHIRO_TUPLE_TUPLE_HPP

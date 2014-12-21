@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef SHIRO_UTILITY_LOGICAL_OR_HPP
 #define SHIRO_UTILITY_LOGICAL_OR_HPP
 
@@ -26,4 +37,4 @@ using logical_or = logical_or_c<F::value, Fn::value...>;
 
 }  // namespace shiro
 
-#endif  // SHIRO_UTILITY_LOGICAL_OR_HPP
+#endif  // #ifndef SHIRO_UTILITY_LOGICAL_OR_HPP

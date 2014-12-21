@@ -1,3 +1,14 @@
+///////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (c) fimbul 2014.
+// https://github.com/fimbul/Shiro
+//
+// Distributed under the Boost Software License, Version 1.0. (See
+// accompanying file LICENSE_1_0.txt or copy at
+// http://www.boost.org/LICENSE_1_0.txt)
+//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifndef SHIRO_TUPLE_DETAIL_IS_NOTHROW_SWAPPABLE_HPP
 #define SHIRO_TUPLE_DETAIL_IS_NOTHROW_SWAPPABLE_HPP
 
@@ -23,4 +34,4 @@ struct is_nothrow_swappable {
 }  // namespace detail
 }  // namespace shiro
 
-#endif  // SHIRO_TUPLE_DETAIL_IS_NOTHROW_SWAPPABLE_HPP
+#endif  // #ifndef SHIRO_TUPLE_DETAIL_IS_NOTHROW_SWAPPABLE_HPP
