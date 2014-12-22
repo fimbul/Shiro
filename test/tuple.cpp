@@ -62,6 +62,14 @@ int main() {
         "");
     static_assert(shiro::tuple_size<t>::value == 2, "");
   }
+  // is_tuple
+  {
+    static_assert(shiro::is_tuple<shiro::tuple<>>::value, "");
+    static_assert(shiro::is_tuple<const shiro::tuple<>>::value, "");
+    static_assert(shiro::is_tuple<volatile shiro::tuple<>>::value, "");
+    static_assert(shiro::is_tuple<const volatile shiro::tuple<>>::value, "");
+    static_assert(shiro::is_tuple<shiro::tuple<int, char, double>>::value, "");
+  }
 
   /* ctor */
   // default ctor
@@ -270,13 +278,6 @@ int main() {
     static_assert(ct1 == ct2, "");
   }
   {
-    constexpr shiro::tuple<int, int, int, int, int, int, int> ct1(1, 2, 3, 4, 5,
-                                                                  6, 7);
-    constexpr shiro::tuple<int, int, int, int, int, int, int> ct2(1, 2, 3, 4, 5,
-                                                                  7, 7);
-    static_assert(ct1 != ct2, "");
-  }
-  {
     constexpr shiro::tuple<> ct1;
     constexpr shiro::tuple<> ct2;
     static_assert(ct1 == ct2, "");
@@ -289,6 +290,13 @@ int main() {
   {
     constexpr shiro::tuple<int, char> ct1(1, 'a');
     constexpr shiro::tuple<int, char> ct2(1, 'b');
+    static_assert(ct1 != ct2, "");
+  }
+  {
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct1(1, 2, 3, 4, 5,
+                                                                  6, 7);
+    constexpr shiro::tuple<int, int, int, int, int, int, int> ct2(1, 2, 3, 4, 5,
+                                                                  7, 7);
     static_assert(ct1 != ct2, "");
   }
   {

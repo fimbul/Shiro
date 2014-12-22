@@ -23,9 +23,9 @@ namespace shiro {
 namespace detail {
 namespace tuple {
 
-template <typename F, typename Tuple, size_t... Indices>
+template <typename F, typename Tuple, std::size_t... Indices>
 constexpr decltype(auto)
-    apply_impl(F&& f, Tuple&& t, std::index_sequence<Indices...>) {
+    apply_impl(F&& f, Tuple&& t, const std::index_sequence<Indices...>&) {
   return std::forward<F>(f)(shiro::get<Indices>(std::forward<Tuple>(t))...);
 }
 
