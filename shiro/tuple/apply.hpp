@@ -25,7 +25,7 @@ namespace tuple {
 
 template <typename F, typename Tuple, std::size_t... Indices>
 constexpr decltype(auto)
-    apply_impl(F&& f, Tuple&& t, const std::index_sequence<Indices...>&) {
+    apply(F&& f, Tuple&& t, const std::index_sequence<Indices...>&) {
   return std::forward<F>(f)(shiro::get<Indices>(std::forward<Tuple>(t))...);
 }
 
@@ -36,8 +36,8 @@ template <typename F, typename Tuple>
 constexpr decltype(auto) apply(F&& f, Tuple&& t) {
   using Indices =
       shiro::make_index_sequence<shiro::tuple_size<std::decay_t<Tuple>>::value>;
-  return shiro::detail::tuple::apply_impl(std::forward<F>(f),
-                                          std::forward<Tuple>(t), Indices{});
+  return shiro::detail::tuple::apply(std::forward<F>(f), std::forward<Tuple>(t),
+                                     Indices{});
 }
 
 }  // namespace shiro

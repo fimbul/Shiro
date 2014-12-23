@@ -9,13 +9,21 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef SHIRO_UTILITY_HPP
-#define SHIRO_UTILITY_HPP
+#ifndef SHIRO_UTILITY_EXCHANGE_HPP
+#define SHIRO_UTILITY_EXCHANGE_HPP
 
-#include <shiro/utility/exchange.hpp>
-#include <shiro/utility/logical_and.hpp>
-#include <shiro/utility/logical_or.hpp>
-#include <shiro/utility/integer_sequence_range.hpp>
-#include <shiro/utility/swallow.hpp>
+#include <type_traits>
+#include <utility>
 
-#endif  // #ifndef SHIRO_UTILITY_HPP
+namespace shiro {
+
+template <typename T, typename U = T>
+constexpr T exchange(T& obj, U&& new_value) {
+  T old_value = std::move(obj);
+  obj = std::forward<U>(new_value);
+  return old_value;
+}
+
+}  // namespace shiro
+
+#endif  // SHIRO_UTILITY_EXCHANGE_HPP

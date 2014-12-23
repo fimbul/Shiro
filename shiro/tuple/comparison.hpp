@@ -137,7 +137,7 @@ constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
 template <typename... Types, typename... UTypes>
 constexpr bool operator==(const tuple<Types...>& t, const tuple<UTypes...>& u) {
   static_assert(sizeof...(Types) == sizeof...(UTypes),
-                "tuple objects can only be compared if they have equal sizes.");
+                "tuple objects can only be compared if they have equal sizes");
   return shiro::detail::tuple::tuple_eq(sizeof...(Types) == sizeof...(UTypes),
                                         t, u);
 }
@@ -150,7 +150,7 @@ constexpr bool operator!=(const tuple<Types...>& t, const tuple<UTypes...>& u) {
 template <typename... Types, typename... UTypes>
 constexpr bool operator<(const tuple<Types...>& t, const tuple<UTypes...>& u) {
   static_assert(sizeof...(Types) == sizeof...(UTypes),
-                "tuple objects can only be compared if they have equal sizes.");
+                "tuple objects can only be compared if they have equal sizes");
   return shiro::detail::tuple::tuple_lt(sizeof...(Types) == sizeof...(UTypes),
                                         t, u);
 }
