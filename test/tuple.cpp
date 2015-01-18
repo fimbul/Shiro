@@ -20,6 +20,14 @@ constexpr bool apply_test_func(const char*, const char*, int, bool) {
   return true;
 }
 
+template<typename... Types>
+class member_test_class{
+  shiro::tuple<Types...> t;
+ public:
+  explicit constexpr member_test_class(Types&&... ts)
+      : t(std::forward<Types>(ts)...) {}
+};
+
 int main() {
   /* meta functions */
   {
@@ -404,5 +412,12 @@ int main() {
   {
     constexpr auto tmp = shiro::make_tuple("Hello", "world", 123, true);
     static_assert(shiro::apply(apply_test_func, tmp), "");
+  }
+
+  /* class member */
+  {
+    constexpr member_test_class<int, int, int> _1(1, 2, 3);
+    constexpr member_test_class<const char*, const char*> _2{"Hello", "world"};
+    constexpr member_test_class<> _3;
   }
 }
