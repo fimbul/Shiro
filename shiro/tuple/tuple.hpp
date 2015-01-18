@@ -318,6 +318,22 @@ class tuple {
   }
 };
 
+template <>
+class tuple<> {
+ public:
+  constexpr tuple() noexcept {}
+
+  constexpr tuple(const tuple&) noexcept = default;
+
+  constexpr tuple(tuple&&) noexcept = default;
+
+  tuple& operator=(const tuple&) noexcept = default;
+
+  tuple& operator=(tuple&&) noexcept = default;
+
+  void swap(tuple& t) noexcept {}
+};
+
 }  // namespace shiro
 
 #endif  // #ifndef SHIRO_TUPLE_TUPLE_HPP
