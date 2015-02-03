@@ -134,7 +134,11 @@ struct make_tuple_cat_index2_impl2;
 
 template <std::size_t N, std::size_t... Indices>
 struct make_tuple_cat_index2_impl2<N, std::index_sequence<Indices...>> {
-  using type = std::index_sequence<(Indices, N)...>;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-value"
+  /* warning: left operand of comma operator has no effect [-Wunused-value] */
+  using type = std::index_sequence<(Indices, N)...>; /* index_sequence<N, N, ..., N> */
+#pragma GCC diagnostic pop
 };
 
 template <typename Indices, typename... IndexTuples>
