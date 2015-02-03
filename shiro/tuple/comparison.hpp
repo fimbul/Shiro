@@ -19,106 +19,118 @@
 #include <shiro/tuple/get.hpp>
 #include <shiro/tuple/tuple.hpp>
 #include <shiro/tuple/tuple_size.hpp>
+#include <shiro/type_traits/enabler.hpp>
 #include <shiro/utility.hpp>
 
 namespace shiro {
 namespace detail {
 namespace tuple {
 
-template <typename... Types, typename... UTypes>
+template <typename... Types, typename... UTypes, std::size_t M, std::size_t N,
+          std::enable_if_t<N - M != 1>*& = shiro::enabler>
 constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
-                        const shiro::tuple<UTypes...>& u);
-template <typename T, typename U>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<T>& t,
-                        const shiro::tuple<U>& u);
-constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&);
-
-template <typename Tuple, typename UTuple, std::size_t... LIndices,
-          std::size_t... RIndices>
+                        const shiro::tuple<UTypes...>& u,
+                        const shiro::index_sequence_range<M, N>&);
+template <typename Tuple, typename UTuple, std::size_t N>
 constexpr bool tuple_eq(bool ie, const Tuple& t, const UTuple& u,
-                        const std::index_sequence<LIndices...>&,
-                        const std::index_sequence<RIndices...>&) {
-  return tuple_eq(
-      tuple_eq(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
-               shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
-      shiro::forward_as_tuple(shiro::get<RIndices>(t)...),
-      shiro::forward_as_tuple(shiro::get<RIndices>(u)...));
+                        const shiro::index_sequence_range<N, N + 1>&);
+constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&,
+                        const shiro::index_sequence_range<0, 0>&);
+
+template <typename Tuple, typename UTuple,
+          std::size_t L, std::size_t M, std::size_t N>
+constexpr bool tuple_eq(bool ie, const Tuple& t, const UTuple& u,
+                        const shiro::index_sequence_range<L, M>& l,
+                        const shiro::index_sequence_range<M, N>& r) {
+  return tuple_eq(tuple_eq(ie, t, u, l), t, u, r);
 }
 
-template <typename T, typename U>
-constexpr bool tuple_eq(bool ie, const shiro::tuple<T>& t,
-                        const shiro::tuple<U>& u) {
-  return ie && (shiro::get<0>(t) == shiro::get<0>(u));
+template <typename Tuple, typename UTuple, std::size_t N>
+constexpr bool tuple_eq(bool ie, const Tuple& t, const UTuple& u,
+                        const shiro::index_sequence_range<N, N + 1>&) {
+  return ie && (shiro::get<N>(t) == shiro::get<N>(u));
 }
 
-constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&) {
+constexpr bool tuple_eq(bool ie, const shiro::tuple<>&, const shiro::tuple<>&,
+                        const shiro::index_sequence_range<0, 0>&) {
   return ie;
+}
+
+template <typename... Types, typename... UTypes, std::size_t M, std::size_t N,
+          std::enable_if_t<N - M != 1>*&>
+constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
+                        const shiro::tuple<UTypes...>& u,
+                        const shiro::index_sequence_range<M, N>&) {
+  return ie ? tuple_eq(
+                  ie, t, u,
+                  shiro::index_sequence_range<M, M + (N - M) / 2>{},
+                  shiro::index_sequence_range<M + (N - M) / 2, N>{})
+            : ie;
 }
 
 template <typename... Types, typename... UTypes>
 constexpr bool tuple_eq(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
-  return ie ? tuple_eq(
-                  ie, t, u,
-                  shiro::make_index_sequence_range<0, sizeof...(Types) / 2>{},
-                  shiro::make_index_sequence_range<sizeof...(Types) / 2,
-                                                   sizeof...(Types)>{})
-            : ie;
+  return tuple_eq(ie, t, u,
+                  shiro::index_sequence_range<0, sizeof...(Types)>{});
 }
 
-template <typename... Types, typename... UTypes>
+template <typename... Types, typename... UTypes, std::size_t M, std::size_t N,
+          std::enable_if_t<N - M != 1>*& = shiro::enabler>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<Types...>& t,
-                                         const shiro::tuple<UTypes...>& u);
-template <typename T, typename U>
+                                         const shiro::tuple<UTypes...>& u,
+                                         const shiro::index_sequence_range<M, N>&);
+template <typename Tuple, typename UTuple, std::size_t N>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
-                                         const shiro::tuple<T>& t,
-                                         const shiro::tuple<U>& u);
+                                         const Tuple& t,
+                                         const UTuple& u,
+                                         const shiro::index_sequence_range<N, N+1>&);
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<>&,
-                                         const shiro::tuple<>&);
+                                         const shiro::tuple<>&,
+                                         const shiro::index_sequence_range<0, 0>&);
 
-template <typename Tuple, typename UTuple, std::size_t... LIndices,
-          std::size_t... RIndices>
+template <typename Tuple, typename UTuple,
+          std::size_t L, std::size_t M, std::size_t N>
 constexpr std::pair<bool, bool> tuple_lt(
     const std::pair<bool, bool>& ie, const Tuple& t, const UTuple& u,
-    const std::index_sequence<LIndices...>&,
-    const std::index_sequence<RIndices...>&) {
-  return tuple_lt(
-      tuple_lt(ie, shiro::forward_as_tuple(shiro::get<LIndices>(t)...),
-               shiro::forward_as_tuple(shiro::get<LIndices>(u)...)),
-      shiro::forward_as_tuple(shiro::get<RIndices>(t)...),
-      shiro::forward_as_tuple(shiro::get<RIndices>(u)...));
+    const shiro::index_sequence_range<L, M>& l,
+    const shiro::index_sequence_range<M, N>& r) {
+  return tuple_lt(tuple_lt(ie, t, u, l), t, u, r);
 }
 
-template <typename T, typename U>
+template <typename Tuple, typename UTuple, std::size_t N>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
-                                         const shiro::tuple<T>& t,
-                                         const shiro::tuple<U>& u) {
-  return ie.first ? ie : ie.second ? (shiro::get<0>(t) < shiro::get<0>(u))
+                                         const Tuple& t,
+                                         const UTuple& u,
+                                         const shiro::index_sequence_range<N, N + 1>&) {
+  return ie.first ? ie : ie.second ? (shiro::get<N>(t) < shiro::get<N>(u))
       ? std::make_pair(true, true)
-      : !(shiro::get<0>(u) < shiro::get<0>(t)) ? ie
+      : !(shiro::get<N>(u) < shiro::get<N>(t)) ? ie
                                                : std::make_pair(false, false)
       : ie;
 }
 
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<>&,
-                                         const shiro::tuple<>&) {
+                                         const shiro::tuple<>&,
+                                         const shiro::index_sequence_range<0, 0>&) {
   return ie;
 }
 
-template <typename... Types, typename... UTypes>
+template <typename... Types, typename... UTypes, std::size_t M, std::size_t N,
+          std::enable_if_t<N - M != 1>*&>
 constexpr std::pair<bool, bool> tuple_lt(const std::pair<bool, bool>& ie,
                                          const shiro::tuple<Types...>& t,
-                                         const shiro::tuple<UTypes...>& u) {
+                                         const shiro::tuple<UTypes...>& u,
+                                         const shiro::index_sequence_range<M, N>&) {
   return ie.first == ie.second
              ? ie
              : tuple_lt(
                    ie, t, u,
-                   shiro::make_index_sequence_range<0, sizeof...(Types) / 2>{},
-                   shiro::make_index_sequence_range<sizeof...(Types) / 2,
-                                                    sizeof...(Types)>{});
+                   shiro::index_sequence_range<M, M + (N - M) / 2>{},
+                   shiro::index_sequence_range<M + (N - M) / 2, N>{});
 }
 
 constexpr bool tuple_lt(const std::pair<bool, bool>& ie) {
@@ -128,7 +140,8 @@ constexpr bool tuple_lt(const std::pair<bool, bool>& ie) {
 template <typename... Types, typename... UTypes>
 constexpr bool tuple_lt(bool ie, const shiro::tuple<Types...>& t,
                         const shiro::tuple<UTypes...>& u) {
-  return tuple_lt(tuple_lt(std::make_pair(false, ie), t, u));
+  return tuple_lt(tuple_lt(std::make_pair(false, ie), t, u,
+                           shiro::index_sequence_range<0, sizeof...(Types)>{}));
 }
 
 }  // namespace tuple
