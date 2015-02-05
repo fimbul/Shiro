@@ -22,28 +22,52 @@ namespace detail {
 namespace tuple {
 
 template <std::size_t I, typename T>
-constexpr T& get(tuple_leaf<I, T>& l) noexcept {
+constexpr T& get(tuple_leaf<I, T, false>& l) noexcept {
   return l.value;
 }
 template <std::size_t I, typename T>
-constexpr const T& get(const tuple_leaf<I, T>& l) noexcept {
+constexpr const T& get(const tuple_leaf<I, T, false>& l) noexcept {
   return l.value;
 }
 template <std::size_t I, typename T>
-constexpr T&& get(tuple_leaf<I, T>&& l) noexcept {
+constexpr T&& get(tuple_leaf<I, T, false>&& l) noexcept {
   return std::forward<T>(l.value);
 }
 template <typename T, std::size_t I>
-constexpr T& get(tuple_leaf<I, T>& l) noexcept {
+constexpr T& get(tuple_leaf<I, T, false>& l) noexcept {
   return l.value;
 }
 template <typename T, std::size_t I>
-constexpr const T& get(const tuple_leaf<I, T>& l) noexcept {
+constexpr const T& get(const tuple_leaf<I, T, false>& l) noexcept {
   return l.value;
 }
 template <typename T, std::size_t I>
-constexpr T&& get(tuple_leaf<I, T>&& l) noexcept {
+constexpr T&& get(tuple_leaf<I, T, false>&& l) noexcept {
   return std::forward<T>(l.value);
+}
+template <std::size_t I, typename T>
+constexpr T& get(tuple_leaf<I, T, true>& l) noexcept {
+  return l;
+}
+template <std::size_t I, typename T>
+constexpr const T& get(const tuple_leaf<I, T, true>& l) noexcept {
+  return l;
+}
+template <std::size_t I, typename T>
+constexpr T&& get(tuple_leaf<I, T, true>&& l) noexcept {
+  return std::forward<T>(l);
+}
+template <typename T, std::size_t I>
+constexpr T& get(tuple_leaf<I, T, true>& l) noexcept {
+  return l;
+}
+template <typename T, std::size_t I>
+constexpr const T& get(const tuple_leaf<I, T, true>& l) noexcept {
+  return l;
+}
+template <typename T, std::size_t I>
+constexpr T&& get(tuple_leaf<I, T, true>&& l) noexcept {
+  return std::forward<T>(l);
 }
 
 }  // namespace tuple
