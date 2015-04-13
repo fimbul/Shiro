@@ -33,11 +33,13 @@ namespace shiro {
 namespace detail {
 namespace tuple {
 
+template <std::size_t Index, typename Type, bool EBO>
+class tuple_leaf;
+
 template <std::size_t Index, typename Type>
-class tuple_leaf {
+class tuple_leaf<Index, Type, false> {
  public:
   using type = Type;
-  static constexpr std::size_t index = Index;
   Type value;
 
   constexpr tuple_leaf() noexcept(noexcept(Type())) : value() {}
@@ -46,6 +48,19 @@ class tuple_leaf {
   explicit constexpr tuple_leaf(UType&& uarg) noexcept(
       noexcept(Type(std::forward<UType>(uarg))))
       : value(std::forward<UType>(uarg)) {}
+};
+
+template <std::size_t Index, typename Type>
+class tuple_leaf<Index, Type, true> : public Type {
+ public:
+  using type = Type;
+
+  constexpr tuple_leaf() noexcept(noexcept(Type())) : Type() {}
+
+  template <typename UType>
+  explicit constexpr tuple_leaf(UType&& uarg) noexcept(
+      noexcept(Type(std::forward<UType>(uarg))))
+      : Type(std::forward<UType>(uarg)) {}
 };
 
 template <typename Indices, typename TupleTypes>

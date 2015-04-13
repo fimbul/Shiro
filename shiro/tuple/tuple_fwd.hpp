@@ -12,6 +12,8 @@
 #ifndef SHIRO_TUPLE_TUPLE_FWD_HPP
 #define SHIRO_TUPLE_TUPLE_FWD_HPP
 
+#include <type_traits>
+
 namespace shiro {
 
 template <typename... Types>
@@ -29,7 +31,9 @@ class tuple_types;
 template <typename Indices, typename TupleTypes>
 class tuple_base;
 
-template <std::size_t I, typename T>
+template <std::size_t I, typename T,
+          bool EBO = std::is_empty<T>::value and not std::is_final<T>::value
+         >
 class tuple_leaf;
  
 }  // namespace tuple
